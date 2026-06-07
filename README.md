@@ -63,31 +63,43 @@ LLM EVAL HARNESS — PER-QUERY RESULTS
 ======================================================================
 
 [q001] Why does Spark use lazy evaluation?
-  Context relevance : 3/3  — Directly addresses lazy evaluation and Catalyst optimizer.
-  Faithfulness      : ✓  — All claims present in retrieved context.
-  Correctness       : 3/3  — Correct and complete.
-  Latency           : 847ms
+  Context relevance : 3/3  — Directly explains lazy evaluation and Catalyst optimizer.
+  Faithfulness      : ✓  — All statements supported by retrieved context.
+  Correctness       : 2/3  — Core concept correct; misses filter pushdown specifics.
+  Latency           : 1981ms
 
 [q002] What is the purpose of watermarks in Apache Flink?
-  Context relevance : 3/3  — Flink watermark chunk retrieved correctly.
+  Context relevance : 3/3  — Directly covers watermark mechanism and BoundedOutOfOrderness.
   Faithfulness      : ✓  — Answer grounded in context.
-  Correctness       : 3/3  — Accurate explanation of BoundedOutOfOrderness.
-  Latency           : 923ms
+  Correctness       : 3/3  — Accurate explanation of event-time progress and window closure.
+  Latency           : 1434ms
 
-...
+[q005] What are the three conventional dbt model layers?
+  Context relevance : 3/3  — Directly identifies all three layers with clear descriptions.
+  Faithfulness      : ✓  — All information stated in context.
+  Correctness       : 3/3  — Accurate and complete.
+  Latency           : 997ms
+
+[q010] What happens to Spark jobs when partitions are skewed?
+  Context relevance : 3/3  — Explicitly addresses stragglers and job slowdown.
+  Faithfulness      : ✓  — Directly quoted from context.
+  Correctness       : 2/3  — Identifies stragglers but omits stage-wait bottleneck detail.
+  Latency           : 1014ms
+
+... (12 queries total)
 
 ======================================================================
 AGGREGATE SUMMARY
 ======================================================================
   Samples               : 12
-  Avg context relevance : 2.8/3
-  Avg correctness       : 2.7/3
+  Avg context relevance : 3.0/3
+  Avg correctness       : 2.67/3
   Faithfulness rate     : 100%
-  Avg latency           : 910ms
-  p95 latency           : 1240ms
-  Total tokens          : 48,320 in / 6,840 out
-  Total cost            : $0.0661
-  Cost per query        : $0.00551
+  Avg latency           : 1512ms
+  p95 latency           : 1951ms
+  Total tokens          : 19,837 in / 3,429 out
+  Total cost            : $0.0296
+  Cost per query        : $0.00247
 ======================================================================
 ```
 
