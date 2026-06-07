@@ -1,0 +1,77 @@
+[
+  {
+    "id": "c001",
+    "topic": "spark",
+    "text": "Apache Spark uses lazy evaluation: transformations like map(), filter(), and select() build a logical plan but do not execute until an action (collect(), count(), write()) is called. The Catalyst optimizer analyzes the full plan before execution, enabling it to reorder filters, eliminate redundant steps, and combine shuffle operations. This means calling df.filter(...).map(...) does not move any data — it only records the intent. The physical plan is only generated and executed when an action triggers it."
+  },
+  {
+    "id": "c002",
+    "topic": "spark",
+    "text": "Spark partitioning determines parallelism. A DataFrame's default partition count is set by spark.sql.shuffle.partitions (default 200) for shuffles. For reads, the number of input partitions depends on the source: HDFS files produce one partition per 128MB block by default, Kafka sources produce one partition per Kafka partition. You can repartition() to increase or coalesce() to decrease partitions without a full shuffle. Skewed partitions — where one partition has far more data than others — cause stragglers and slow the entire job."
+  },
+  {
+    "id": "c003",
+    "topic": "airflow",
+    "text": "An Apache Airflow DAG (Directed Acyclic Graph) defines a workflow as a Python file. Tasks within the DAG are connected with >> (bitshift operator) to set dependencies: task_a >> task_b means task_b runs after task_a succeeds. The scheduler reads DAG files on a configurable interval and triggers runs based on the schedule_interval. DAG runs are identified by their logical date (formerly execution_date), which represents the start of the schedule interval, not the actual time the run was triggered."
+  },
+  {
+    "id": "c004",
+    "topic": "airflow",
+    "text": "Airflow XComs (cross-communications) allow tasks to share small amounts of data. A task pushes a value with xcom_push(key, value) or by returning a value from execute(). Downstream tasks pull it with xcom_get(task_id, key). XComs are stored in the Airflow metadata database and are suitable only for small values (strings, numbers, small dicts) — not DataFrames or large files. For large data transfer between tasks, store the data in an external system (S3, GCS, a database) and pass only the path or reference as an XCom."
+  },
+  {
+    "id": "c005",
+    "topic": "delta_lake",
+    "text": "Delta Lake adds ACID transactions to data lakes. Every write (insert, update, delete, merge) is recorded in the transaction log (_delta_log directory) as a JSON commit file. Readers see a consistent snapshot by reading the transaction log to determine which Parquet files are part of the current table version. This enables time travel: you can query a table as it existed at a past version or timestamp. ACID guarantees mean concurrent writes do not corrupt the table — conflicting writes are detected and one is retried or rejected."
+  },
+  {
+    "id": "c006",
+    "topic": "dbt",
+    "text": "dbt (data build tool) organizes SQL transformations into three conventional layers. The staging layer selects from raw source tables and applies basic cleaning (casting, renaming, filtering nulls) without joining. The intermediate layer joins and enriches staged data. The mart layer produces analytics-ready tables (facts and dimensions) designed for BI tools. Each layer is a separate subdirectory in models/. This separation makes transformations independently testable and prevents downstream consumers from depending on unstable raw data shapes."
+  },
+  {
+    "id": "c007",
+    "topic": "dbt",
+    "text": "dbt data quality tests run assertions against model output. Generic tests (unique, not_null, accepted_values, relationships) are configured in YAML schema files. Singular tests are custom SQL queries that return rows when a condition fails — if any rows are returned, the test fails. Tests run with dbt test and can be configured to warn or error. dbt also supports source freshness checks: source freshness defines a maximum age for source tables, and dbt source freshness alerts when a table has not been updated within the threshold."
+  },
+  {
+    "id": "c008",
+    "topic": "kafka",
+    "text": "A Kafka consumer group allows multiple consumers to share the work of reading from a topic. Each partition in the topic is assigned to exactly one consumer in the group at a time. If a group has more consumers than partitions, some consumers sit idle. Adding consumers to a group (up to the partition count) increases throughput linearly. Kafka tracks each consumer group's read position (offset) per partition in an internal topic called __consumer_offsets. Consumer groups enable independent processing: two different groups can each read all messages from the same topic independently."
+  },
+  {
+    "id": "c009",
+    "topic": "kafka",
+    "text": "Within a single Kafka partition, messages are strictly ordered by offset. Across partitions, there is no ordering guarantee. When a producer sends messages without a key, Kafka distributes them across partitions in round-robin order. When a key is specified, Kafka hashes the key and always routes messages with the same key to the same partition, preserving order for that key. This is why user_id is a common partition key for event streams: all events for the same user land in the same partition and are processed in order."
+  },
+  {
+    "id": "c010",
+    "topic": "bigquery",
+    "text": "BigQuery table partitioning divides a table into segments by a column value, typically a date or timestamp. Queries that filter on the partition column scan only the matching partitions, reducing both cost and latency. Clustering further sorts data within each partition by one or more columns; clustered queries scan only the relevant byte ranges within a partition. Partitioning prunes at the partition level (whole partitions skipped); clustering prunes at the block level within partitions. Both can be applied together: partition by date, cluster by user_id or region."
+  },
+  {
+    "id": "c011",
+    "topic": "flink",
+    "text": "Apache Flink distinguishes event-time from processing-time. Processing-time assigns events to windows based on the system clock when the event is processed by Flink. Event-time assigns events to windows based on a timestamp embedded in the event itself. For analytics that must reflect when something actually happened — user purchases, sensor readings, clickstream events — event-time is correct. Processing-time is simpler to implement but produces wrong aggregates whenever events arrive late or out of order, which is common in any system with retry queues, network lag, or upstream batch flushes."
+  },
+  {
+    "id": "c012",
+    "topic": "flink",
+    "text": "Flink watermarks signal event-time progress to the streaming engine. A watermark at time T means: all events with timestamp <= T have been observed. When a window's end time is <= the current watermark, the window closes and results are emitted. BoundedOutOfOrderness watermarks tolerate late events by subtracting a configured lag from the maximum observed event timestamp. For example, a 30-second lag means Flink waits an extra 30 seconds before closing each window, absorbing events that arrive up to 30 seconds late. Events arriving after the window closes can be routed to a side output rather than silently dropped."
+  },
+  {
+    "id": "c013",
+    "topic": "snowflake",
+    "text": "Snowflake stores data in micro-partitions: immutable, compressed columnar files of 50–500MB of uncompressed data. Snowflake automatically tracks the min and max value of each column in each micro-partition in metadata. At query time, Snowflake uses this metadata to skip micro-partitions that cannot contain rows matching the filter — a process called micro-partition pruning. This is why filters on columns with high cardinality and monotonic values (like timestamps or incrementing IDs) are especially efficient: they prune most micro-partitions immediately."
+  },
+  {
+    "id": "c014",
+    "topic": "rag",
+    "text": "A Retrieval-Augmented Generation (RAG) system grounds LLM responses in retrieved documents. At query time: (1) the user question is embedded or matched against a document corpus; (2) the top-k most relevant document chunks are retrieved; (3) the chunks are included in the LLM prompt as context; (4) the LLM generates an answer constrained to that context. RAG reduces hallucination on factual questions because the model reasons over retrieved evidence rather than relying on parametric (baked-in) knowledge. The quality of a RAG system depends on both retrieval quality and faithfulness of the generation step."
+  },
+  {
+    "id": "c015",
+    "topic": "llm",
+    "text": "Prompt caching (supported by Anthropic and some other providers) stores a processed version of a prompt prefix on the provider's servers. On subsequent API calls that share the same prefix, the cached prefix is reused rather than reprocessed, reducing both latency and cost. Anthropic's implementation uses cache_control with type ephemeral on content blocks to mark them as cacheable. Cached input tokens are billed at approximately 10% of normal input token cost. The cache is keyed on exact content — any change to the cached block invalidates it. Caching is most effective when a large system prompt is stable across many requests."
+  }
+]

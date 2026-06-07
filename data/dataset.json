@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q001",
+    "question": "Why does Spark use lazy evaluation?",
+    "ground_truth_answer": "Spark uses lazy evaluation so the Catalyst optimizer can analyze the complete logical plan before executing, enabling optimizations like filter pushdown and shuffle elimination. Transformations are recorded but not executed until an action like collect() or write() is called."
+  },
+  {
+    "id": "q002",
+    "question": "What is the purpose of watermarks in Apache Flink?",
+    "ground_truth_answer": "Watermarks signal event-time progress in Flink. A watermark at time T tells Flink that all events with timestamp <= T have been observed, allowing it to close windows and emit results. BoundedOutOfOrderness watermarks add a tolerance lag to handle late-arriving events."
+  },
+  {
+    "id": "q003",
+    "question": "How does Airflow pass data between tasks?",
+    "ground_truth_answer": "Airflow uses XComs to pass small values between tasks. A task pushes a value with xcom_push() or by returning from execute(), and downstream tasks pull it with xcom_get(). XComs are stored in the Airflow metadata database and are only suitable for small values, not large datasets."
+  },
+  {
+    "id": "q004",
+    "question": "What is the difference between partitioning and clustering in BigQuery?",
+    "ground_truth_answer": "Partitioning divides a table by a column value (typically date) so queries filter at the partition level and skip entire partitions. Clustering sorts data within partitions by one or more columns so queries skip byte ranges within partitions. They can be combined: partition by date, cluster by a dimension column."
+  },
+  {
+    "id": "q005",
+    "question": "What are the three conventional dbt model layers?",
+    "ground_truth_answer": "The staging layer selects from raw sources and applies basic cleaning. The intermediate layer joins and enriches staged data. The mart layer produces analytics-ready facts and dimensions for BI tools."
+  },
+  {
+    "id": "q006",
+    "question": "How does prompt caching reduce LLM API costs?",
+    "ground_truth_answer": "Prompt caching stores a processed version of a stable prompt prefix on the provider's servers. Subsequent requests that reuse the same prefix pay approximately 10% of the normal input token cost instead of full price. It works best when a large system prompt is shared across many requests."
+  },
+  {
+    "id": "q007",
+    "question": "How does a Kafka consumer group increase read throughput?",
+    "ground_truth_answer": "A consumer group assigns each partition to exactly one consumer. Adding more consumers (up to the number of partitions) distributes the read load, increasing throughput linearly. Kafka tracks each group's offset independently, so multiple groups can read the same topic without interference."
+  },
+  {
+    "id": "q008",
+    "question": "How does Delta Lake enable time travel?",
+    "ground_truth_answer": "Delta Lake records every write as a commit in the transaction log (_delta_log). Readers determine the current table version by replaying the log. To query past state, you specify a version number or timestamp and Delta Lake replays the log only up to that point, returning the table as it existed then."
+  },
+  {
+    "id": "q009",
+    "question": "Why does RAG reduce LLM hallucination?",
+    "ground_truth_answer": "RAG grounds the LLM in retrieved documents by including relevant chunks in the prompt as context. The model reasons over retrieved evidence rather than relying on its parametric knowledge, which can be outdated or fabricated. Hallucination is reduced because the model is constrained to information present in the context."
+  },
+  {
+    "id": "q010",
+    "question": "What happens to Spark jobs when partitions are skewed?",
+    "ground_truth_answer": "Skewed partitions cause stragglers: one task processes far more data than others and becomes the bottleneck. The entire stage waits for the slowest task, so skew slows the full job even if most partitions finish quickly."
+  },
+  {
+    "id": "q011",
+    "question": "How does Kafka guarantee message ordering?",
+    "ground_truth_answer": "Kafka guarantees ordering only within a single partition. Assigning a message key causes Kafka to hash it to the same partition consistently, preserving order for all messages with the same key. Across partitions, there is no ordering guarantee."
+  },
+  {
+    "id": "q012",
+    "question": "What is Snowflake micro-partition pruning?",
+    "ground_truth_answer": "Snowflake stores data in immutable micro-partitions and tracks the min/max value of each column per micro-partition in metadata. At query time, filters on a column cause Snowflake to skip micro-partitions whose min/max range cannot contain matching rows, reducing scan size without reading the actual data."
+  }
+]
