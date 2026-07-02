@@ -4,7 +4,14 @@ Automated evaluation framework for RAG (Retrieval-Augmented Generation) systems.
 
 ## Why this exists
 
-RAG systems fail in two places: the retriever returns irrelevant context, or the generator hallucinates facts not present in that context. Eyeballing outputs doesn't scale. This harness runs structured, reproducible evaluations so regressions are caught before they reach production.
+RAG systems fail in two places: the retriever returns irrelevant context, or the generator hallucinates facts not present in that context. Eyeballing outputs doesn't scale — and teams that ship RAG without an eval harness find out about regressions from their users. This harness runs structured, reproducible evaluations so retrieval quality and hallucination rates are measured on every change, the same way unit tests gate code.
+
+**At a glance**
+
+- Scores three failure modes separately: context relevance (retriever), faithfulness / hallucination (generator), and answer correctness (end-to-end)
+- **100% faithfulness rate** across the benchmark, with per-query evidence for every judgment
+- Full 12-query evaluation run costs **$0.0296** (~$0.0025/query) — cost and latency (avg/p95) tracked per query, so quality improvements have a price tag
+- CI-ready: pytest suite fully mocks the Anthropic client — no API key or spend needed to run tests
 
 ## Architecture
 
