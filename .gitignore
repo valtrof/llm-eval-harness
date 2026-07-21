@@ -4,3 +4,5 @@ __pycache__/
 *.pyo
 .pytest_cache/
 eval_report.json
+eval_report_compare.json
+data/raw/

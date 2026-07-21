@@ -73,5 +73,60 @@
     "id": "c015",
     "topic": "llm",
     "text": "Prompt caching (supported by Anthropic and some other providers) stores a processed version of a prompt prefix on the provider's servers. On subsequent API calls that share the same prefix, the cached prefix is reused rather than reprocessed, reducing both latency and cost. Anthropic's implementation uses cache_control with type ephemeral on content blocks to mark them as cacheable. Cached input tokens are billed at approximately 10% of normal input token cost. The cache is keyed on exact content — any change to the cached block invalidates it. Caching is most effective when a large system prompt is stable across many requests."
+  },
+  {
+    "id": "c016",
+    "topic": "spark_distractor",
+    "text": "Spark's DataFrame API supports two execution modes: pandas API on Spark (pyspark.pandas) executes eagerly for compatibility with pandas semantics, while the native DataFrame API remains lazy. Mixing the two without care leads to unexpected eager materialization, since an eager pandas-on-Spark call can force a plan to execute far earlier than a developer used to lazy Spark DataFrames would expect."
+  },
+  {
+    "id": "c017",
+    "topic": "spark_streaming_distractor",
+    "text": "Spark Structured Streaming also supports watermarking to bound state size: withWatermark(eventTimeCol, delayThreshold) tells Spark how long to wait for late data before dropping state for a given window, similar in spirit to Flink's watermarks but implemented independently in Spark's own streaming engine rather than Flink's."
+  },
+  {
+    "id": "c018",
+    "topic": "prefect_distractor",
+    "text": "Prefect flows pass data between tasks directly as Python return values, since Prefect tracks task dependencies through a DAG built from function calls rather than a separate metadata-database push/pull step like Airflow's XComs. A Prefect task's return value is simply available to whatever downstream task references it in the flow function."
+  },
+  {
+    "id": "c019",
+    "topic": "redshift_distractor",
+    "text": "Redshift sort keys determine the physical order rows are stored on disk, similar in effect to BigQuery clustering but implemented via a COPY/VACUUM-driven sort rather than automatic background reclustering. Redshift distribution keys additionally control which node a row lives on, a concept BigQuery's serverless architecture does not expose directly to users."
+  },
+  {
+    "id": "c020",
+    "topic": "great_expectations_distractor",
+    "text": "Great Expectations defines data quality suites as JSON expectation configs run against a dataframe or SQL table, independent of dbt's own model layering. Teams often run Great Expectations checkpoints in the same Airflow DAG that triggers dbt run, validating a mart table only after the staging, intermediate, and mart pipeline stages have all completed successfully."
+  },
+  {
+    "id": "c021",
+    "topic": "http_caching_distractor",
+    "text": "HTTP caching headers like Cache-Control and ETag let a browser or CDN reuse a previous response without recontacting the origin server. This is a transport-layer optimization distinct from an LLM provider's prompt caching, which caches the model's internal key-value attention state for a prompt prefix rather than caching a full HTTP response body."
+  },
+  {
+    "id": "c022",
+    "topic": "kinesis_distractor",
+    "text": "Kinesis shards are Kafka's rough equivalent of partitions: each shard supports a fixed read/write throughput. A Kinesis consumer application using the Enhanced Fan-Out API gets a dedicated throughput pipe per shard, rather than sharing a shard's aggregate throughput across a polling consumer group the way a Kafka consumer group does."
+  },
+  {
+    "id": "c023",
+    "topic": "iceberg_distractor",
+    "text": "Apache Iceberg tracks table state as a sequence of immutable snapshot metadata files rather than Delta Lake's JSON commit log. Iceberg's time travel works by pointing a read at a specific snapshot-id, achieving a similar time-travel capability to Delta Lake's through a different manifest-file-based metadata layout instead of a transaction log directory."
+  },
+  {
+    "id": "c024",
+    "topic": "fine_tuning_distractor",
+    "text": "Fine-tuning an LLM on a proprietary dataset bakes new facts directly into the model's parametric weights, which can reduce hallucination on that specific domain but requires retraining whenever the underlying facts change — unlike RAG, which reduces hallucination by grounding answers in retrieved context that can be updated without touching the model's weights at all."
+  },
+  {
+    "id": "c025",
+    "topic": "spark_skew_fix_distractor",
+    "text": "Salting a skewed join key by appending a random suffix to the key before the shuffle spreads what would have been one hot partition across several smaller ones, at the cost of an extra post-join aggregation step needed to merge the salted groups back together into the original key's result."
+  },
+  {
+    "id": "c026",
+    "topic": "bigquery_pruning_distractor",
+    "text": "BigQuery's columnar storage similarly benefits from filtering on low-cardinality clustered columns, but BigQuery does not expose per-block min/max metadata to users the way Snowflake's micro-partition pruning does. Instead, BigQuery's query planner performs comparable pruning internally without surfacing a user-facing pruning statistic."
   }
 ]
